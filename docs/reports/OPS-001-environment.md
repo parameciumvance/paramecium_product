@@ -2,9 +2,10 @@
 
 - 對應工作單：#4 OPS-001
 - 執行角色：claude-cowork
-- 執行日期／批次：2026-09-11 batch-1（Asia/Taipei）
+- 執行日期／批次：2026-09-11 batch-1、batch-2（Asia/Taipei）
 - 基準 commit：`28eac487197f2166557147293df5f5635473c16e`（main）
-- 工作分支：`work/4-ops-001-env-verify`（本機建立，見「限制」一節）
+- 工作分支：`work/4-ops-001-env-verify`
+- 狀態：batch-1 因帳號權限受阻；batch-2 權限修正後已推送分支並開立 PR #8，詳見「批次更新」一節
 
 ## 環境確認
 
@@ -84,8 +85,27 @@ fatal: unable to access '...': The requested URL returned error: 403
 2. 重複第 6 步的本地連結檢查：對每個 markdown 檔案中 `[text](relative/path)` 形式的連結，確認 `relative/path` 對應檔案存在。
 3. 重複第 3、5 步驗證帳號權限是否已調整（預期在權限修正後應能成功）。
 
+## 批次更新（batch-2，權限修正後）
+
+老闆將 `paramecium21-claude` 加為 repository collaborator 後，重新執行以下驗證：
+
+```
+$ gh repo view parameciumvance/paramecium_product --json viewerPermission
+{"viewerPermission":"WRITE"}
+
+$ git push -u origin work/4-ops-001-env-verify
+ * [new branch]      work/4-ops-001-env-verify -> work/4-ops-001-env-verify
+branch 'work/4-ops-001-env-verify' set up to track 'origin/work/4-ops-001-env-verify'.
+```
+
+結果：權限已提升為 `WRITE`，分支推送成功。接著執行：
+
+- `gh pr create` 成功建立 PR #8（引用本 Issue #4）：https://github.com/parameciumvance/paramecium_product/pull/8
+- `gh issue edit 4` 成功將 Status 改為 `review`（batch-1 當下曾因權限不足失敗，見上方第 3 步）
+
+batch-1 記錄的權限阻塞已排除，不再是待處理限制。
+
 ## 已知限制
 
-- **帳號權限阻塞**：`paramecium21-claude` 目前對 `parameciumvance/paramecium_product` 僅有 READ 權限，無法編輯 Issue 欄位（含 `Status`）、無法 push 分支、無法開 PR。本工作單要求的「建立分支、提交 PR、將 Status 改為 doing/review」因此無法在此帳號下完成，需總監或老闆將帳號權限提升為至少 Write（或改用有權限的帳號）。
-- 本報告與相關程式碼變更目前只存在於本機分支 `work/4-ops-001-env-verify`，尚未推送至 GitHub，待權限修正後補推並開 PR。
 - 尚無應用程式，因此「應用測試」一項標記為未執行；本任務範圍僅涵蓋協作流程與文件驗證。
+- batch-1 的帳號權限阻塞（原「已知限制」）已於 batch-2 排除，保留上方「實際執行命令與結果」第 3、5 步的失敗紀錄作為歷史過程，不代表目前狀態。
